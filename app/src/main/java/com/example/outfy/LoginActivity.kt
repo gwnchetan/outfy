@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import java.util.concurrent.TimeUnit
@@ -51,11 +53,11 @@ class LoginActivity : AppCompatActivity() {
 
     private val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
-        override fun onVerificationCompleted(credential: com.google.firebase.auth.PhoneAuthCredential) {
+        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             // Auto verification (rare case)
         }
 
-        override fun onVerificationFailed(e: Exception) {
+        override fun onVerificationFailed(e: FirebaseException) {
             phoneEditText.error = "Verification failed: ${e.message}"
         }
 
