@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.Outfy" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- Brand Colors -->
+        <item name="colorPrimary">#D6C4AF</item>
+        <item name="colorSecondary">#D6C4AF</item>
+        <item name="colorTertiary">#D6C4AF</item>
+
+        <!-- Fix input highlight color -->
+        <item name="colorControlActivated">#D6C4AF</item>
+        <item name="colorControlHighlight">#D6C4AF</item>
+        <item name="colorControlNormal">#999999</item>
+
     </style>
 
-    <style name="Theme.Outfy" parent="Base.Theme.Outfy" />
+    <style name="Theme.Outfy" parent="Base.Theme.Outfy"/>
+
 </resources>

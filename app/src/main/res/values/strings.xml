@@ -3,4 +3,20 @@
     <string name="tag_line">Find Your Premium Fit</string>
     <string name="login_heading">SIGN IN</string>
     <string name="login_acc">Login Into Your Account</string>
+    
+    <!-- OTP Screen -->
+    <string name="otp_title">OTP Verification</string>
+    <string name="otp_subtitle">Enter the OTP sent to %1$s</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp_text">Didn\'t receive the OTP? Resend</string>
+    <string name="app_brand_name">OUTFYT</string>
+    <string name="premium_apparel">PREMIUM APPAREL</string>
+
+    <!-- Register Screen -->
+    <string name="create_account">Create Your Account</string>
+    <string name="hint_full_name">Enter your full name</string>
+    <string name="hint_email">name@example.com</string>
+    <string name="hint_dob">DD / MM / YYYY</string>
+    <string name="hint_gender">Select gender</string>
+    <string name="continue_text">Continue</string>
 </resources>

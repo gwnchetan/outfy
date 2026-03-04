@@ -1,20 +1,28 @@
 package com.example.outfy
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.outfy.adapter.ProductAdapter
+import com.example.outfy.model.Product
 
 class HomeActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_home)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+
+        val productList = listOf(
+            Product("Knit Polo Shirt", "$120", R.drawable.logo_elem),
+            Product("Pleated Midi Skirt", "$145", R.drawable.logo_img),
+            Product("Leather Crossbody", "$210", R.drawable.splash_screen_image),
+            Product("Classic Loafers", "$185", R.drawable.logo_elem)
+        )
+
+        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        recyclerView.adapter = ProductAdapter(productList)
     }
 }
