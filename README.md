@@ -4,12 +4,6 @@ An e-commerce Android application for premium apparel, built with Kotlin followi
 
 ---
 
-## Screenshots
-
-> _Add screenshots here_
-
----
-
 ## Features
 
 ### Authentication
@@ -138,7 +132,7 @@ com.example.outfy
 
 1. Clone the repo
 ```bash
-git clone https://github.com/YOURUSERNAME/outfy.git
+git clone https://github.com/gwnchetan/outfy.git
 ```
 
 2. Open in Android Studio
