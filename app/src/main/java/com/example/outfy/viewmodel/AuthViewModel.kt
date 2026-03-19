@@ -1,85 +1,153 @@
 package com.example.outfy.viewmodel
 
 import android.app.Activity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.outfy.data.AuthRepository
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 
 class AuthViewModel : ViewModel() {
 
     private val repository = AuthRepository()
 
-    val verificationId = MutableLiveData<String>()
-    val authResult = MutableLiveData<FirebaseUser?>()
-    val isUserRegistered = MutableLiveData<Boolean>()
-    val errorMessage = MutableLiveData<String>()
+    private val _verificationId = MutableLiveData<String?>()
+    val verificationId: LiveData<String?> = _verificationId
+
+    private val _authResult = MutableLiveData<FirebaseUser?>()
+    val authResult: LiveData<FirebaseUser?> = _authResult
+
+    private val _isUserRegistered = MutableLiveData<Boolean?>()
+    val isUserRegistered: LiveData<Boolean?> = _isUserRegistered
+
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    // ── ADDED: register result LiveData ───────────────────────────
+    private val _registerResult = MutableLiveData<Result<Unit>>()
+    val registerResult: LiveData<Result<Unit>> = _registerResult
 
     fun sendOtp(activity: Activity, phoneNumber: String) {
-
-        val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-            override fun onVerificationCompleted(credential: com.google.firebase.auth.PhoneAuthCredential) {}
-
-            override fun onVerificationFailed(e: com.google.firebase.FirebaseException) {
-                errorMessage.value = e.message
+        _isLoading.value = true
+        repository.checkOtpLimit(phoneNumber) { allowed, message ->
+            if (!allowed) {
+                _isLoading.value = false
+                _errorMessage.value = message
+                return@checkOtpLimit
             }
-
-            override fun onCodeSent(
-                id: String,
-                token: PhoneAuthProvider.ForceResendingToken
-            ) {
-                verificationId.value = id
+            val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                    repository.signInWithCredential(credential) { success, user ->
+                        _isLoading.value = false
+                        if (success) _authResult.value = user
+                        else _errorMessage.value = "Auto verification failed"
+                    }
+                }
+                override fun onVerificationFailed(e: FirebaseException) {
+                    _isLoading.value = false
+                    _errorMessage.value = e.message
+                }
+                override fun onCodeSent(id: String, token: PhoneAuthProvider.ForceResendingToken) {
+                    _isLoading.value = false
+                    _verificationId.value = id
+                }
             }
+            repository.sendOtp(activity, phoneNumber, callbacks)
         }
-
-        repository.sendOtp(activity, phoneNumber, callbacks)
     }
 
     fun verifyOtp(id: String, code: String) {
+        _isLoading.value = true
         repository.verifyOtp(id, code) { success, user ->
-            if (success) {
-                authResult.value = user
-            } else {
-                errorMessage.value = "Invalid OTP"
-            }
+            _isLoading.value = false
+            if (success) _authResult.value = user
+            else _errorMessage.value = "Invalid OTP. Please try again."
         }
     }
 
     fun signInWithGoogle(idToken: String) {
+        _isLoading.value = true
         repository.signInWithGoogle(idToken) { success, user ->
             if (success && user != null) {
-                checkIfUserRegistered(user)
+                repository.checkUserInFirestore(user.uid) { exists, error ->
+                    if (error != null) {
+                        _isLoading.value = false
+                        _errorMessage.value = "Network error. Please try again."
+                        return@checkUserInFirestore
+                    }
+                    if (exists == true) {
+                        _isLoading.value = false
+                        _authResult.value = user
+                        _isUserRegistered.value = true
+                    } else {
+
+                        repository.saveUserToFirestore(
+                            user.uid,
+                            user.displayName ?: "",
+                            email = user.email,
+                            dob = null,
+                            gender = ""
+                        ) { saved, _ ->
+                            _isLoading.value = false
+                            if (saved) {
+                                _authResult.value = user
+                                _isUserRegistered.value = true
+                            } else {
+                                _errorMessage.value = "Failed to save account. Try again."
+                            }
+                        }
+                    }
+                }
             } else {
-                errorMessage.value = "Google Sign-In Failed"
+                _isLoading.value = false
+                _errorMessage.value = "Google Sign-In Failed"
             }
         }
     }
 
     fun checkIfUserRegistered(user: FirebaseUser) {
-        repository.checkUserInFirestore(user.uid) { registered ->
-            if (!registered) {
-                repository.saveUserToFirestore(user) { saved ->
-                    if (saved) {
-                        authResult.value = user
-                        isUserRegistered.value = true
-                    } else {
-                        errorMessage.value = "Failed to save user data"
-                    }
-                }
-            } else {
-                authResult.value = user
-                isUserRegistered.value = true
+        _isLoading.value = true
+        repository.checkUserInFirestore(user.uid) { exists, error ->
+            _isLoading.value = false
+            if (error != null) {
+                _errorMessage.value = "Network error. Please try again."
+                return@checkUserInFirestore
             }
+            _authResult.value = user
+            _isUserRegistered.value = exists
         }
     }
 
-    fun checkUser(): FirebaseUser? {
-        return repository.getCurrentUser()
+    fun registerUser(
+        name: String,
+        email: String?,
+        dob: String,
+        gender: String
+    ) {
+        val uid = repository.getCurrentUser()?.uid
+        if (uid == null) {
+            _registerResult.value = Result.failure(Exception("Session expired. Login again."))
+            return
+        }
+        repository.saveUserToFirestore(
+            uid    = uid,
+            name   = name,
+            email  = email,
+            dob    = dob,
+            gender = gender
+        ) { success, error ->
+            _registerResult.value = if (success) Result.success(Unit)
+            else Result.failure(Exception(error ?: "Registration failed"))
+        }
     }
 
-    fun logout() {
-        repository.signOut()
-    }
+    fun checkUser(): FirebaseUser? = repository.getCurrentUser()
+    fun logout() = repository.signOut()
+    fun resetRegistrationState() { _isUserRegistered.value = null }
 }

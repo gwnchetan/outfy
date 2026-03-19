@@ -2,7 +2,10 @@ package com.example.outfy
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +24,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var googleButton: Button
     private lateinit var viewModel: AuthViewModel
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var loginContainer: FrameLayout
+    private lateinit var loadingProgressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +36,8 @@ class LoginActivity : AppCompatActivity() {
         phoneEditText = findViewById(R.id.phoneEditText)
         getOtpButton = findViewById(R.id.getOtpButton)
         googleButton = findViewById(R.id.googleButton)
+        loginContainer = findViewById(R.id.loginContainer)
+        loadingProgressBar = findViewById(R.id.loadingProgressBar)
 
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -43,10 +50,10 @@ class LoginActivity : AppCompatActivity() {
         getOtpButton.setOnClickListener {
             val phone = phoneEditText.text.toString().trim()
 
-            if (phone.length == 10) {
+            if (phone.length == 10 && phone.all { it.isDigit() }) {
                 viewModel.sendOtp(this, "+91$phone")
             } else {
-                phoneEditText.error = "Enter valid number"
+                phoneEditText.error = "Enter valid 10 digit number"
             }
         }
 
@@ -56,21 +63,47 @@ class LoginActivity : AppCompatActivity() {
         }
 
         viewModel.verificationId.observe(this) { id ->
-            val intent = Intent(this, OtpActivity::class.java)
-            intent.putExtra("verificationId", id)
-            intent.putExtra("phone", phoneEditText.text.toString().trim())
-            startActivity(intent)
+            if (id != null) {
+                val intent = Intent(this, OtpActivity::class.java)
+                intent.putExtra("verificationId", id)
+                intent.putExtra("phone", phoneEditText.text.toString().trim())
+                startActivity(intent)
+            }
         }
 
         viewModel.authResult.observe(this) { user ->
             if (user != null) {
-                startActivity(Intent(this, HomeActivity::class.java))
+                viewModel.checkIfUserRegistered(user)
+            }
+        }
+
+        viewModel.isUserRegistered.observe(this) { registered ->
+            if (registered != null) {
+                if (registered == true) {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                } else {
+                    startActivity(Intent(this, RegisterActivity::class.java))
+                }
                 finish()
             }
         }
 
         viewModel.errorMessage.observe(this) {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            if (it != null) {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.isLoading.observe(this) { loading ->
+            getOtpButton.isEnabled = !loading
+            googleButton.isEnabled = !loading
+            if (loading) {
+                loginContainer.visibility = View.GONE
+                loadingProgressBar.visibility = View.VISIBLE
+            } else {
+                loginContainer.visibility = View.VISIBLE
+                loadingProgressBar.visibility = View.GONE
+            }
         }
     }
 
@@ -78,8 +111,13 @@ class LoginActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
-                val account = task.getResult(ApiException::class.java)!!
-                viewModel.signInWithGoogle(account.idToken!!)
+                val account = task.getResult(ApiException::class.java)
+                val idToken = account.idToken
+                if (idToken == null) {
+                    Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
+                    return@registerForActivityResult
+                }
+                viewModel.signInWithGoogle(idToken)
             } catch (e: ApiException) {
                 Toast.makeText(this, "Google Sign-In Failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
@@ -88,9 +126,14 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (viewModel.checkUser() != null) {
-            startActivity(Intent(this, HomeActivity::class.java))
-            finish()
+        val user = viewModel.checkUser()
+        if (user != null) {
+            viewModel.checkIfUserRegistered(user)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.resetRegistrationState()
     }
 }
