@@ -27,19 +27,25 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginContainer: FrameLayout
     private lateinit var loadingProgressBar: ProgressBar
 
+    // ── FIX 1: navigation guard ───────────────────────────────────
+    private var hasNavigated = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // ── FIX 2: prevent keyboard auto-open ────────────────────
+        // Clear focus from phoneEditText so keyboard doesn't open on launch
+        phoneEditText = findViewById(R.id.phoneEditText)
+        phoneEditText.clearFocus()
+
         viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
-        phoneEditText = findViewById(R.id.phoneEditText)
         getOtpButton = findViewById(R.id.getOtpButton)
         googleButton = findViewById(R.id.googleButton)
         loginContainer = findViewById(R.id.loginContainer)
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
 
-        // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -49,7 +55,6 @@ class LoginActivity : AppCompatActivity() {
 
         getOtpButton.setOnClickListener {
             val phone = phoneEditText.text.toString().trim()
-
             if (phone.length == 10 && phone.all { it.isDigit() }) {
                 viewModel.sendOtp(this, "+91$phone")
             } else {
@@ -58,56 +63,62 @@ class LoginActivity : AppCompatActivity() {
         }
 
         googleButton.setOnClickListener {
-            val signInIntent = googleSignInClient.signInIntent
-            googleLauncher.launch(signInIntent)
+            googleLauncher.launch(googleSignInClient.signInIntent)
         }
 
         viewModel.verificationId.observe(this) { id ->
-            if (id != null) {
+            // ── FIX 3: guard + reset after navigating ─────────────
+            // Without this, coming back to LoginActivity re-triggers
+            // navigation because LiveData still holds the old value
+            if (id != null && !hasNavigated) {
+                hasNavigated = true
                 val intent = Intent(this, OtpActivity::class.java)
                 intent.putExtra("verificationId", id)
                 intent.putExtra("phone", phoneEditText.text.toString().trim())
                 startActivity(intent)
+                viewModel.resetVerificationId()  // clear so back nav doesn't re-trigger
             }
         }
 
         viewModel.authResult.observe(this) { user ->
-            if (user != null) {
+            if (user != null && !hasNavigated) {
                 viewModel.checkIfUserRegistered(user)
             }
         }
 
         viewModel.isUserRegistered.observe(this) { registered ->
-            if (registered != null) {
-                if (registered == true) {
-                    startActivity(Intent(this, HomeActivity::class.java))
+            if (registered != null && !hasNavigated) {
+                hasNavigated = true
+                val intent = if (registered) {
+                    Intent(this, HomeActivity::class.java)
                 } else {
-                    startActivity(Intent(this, RegisterActivity::class.java))
+                    Intent(this, RegisterActivity::class.java).apply {
+                        putExtra("authProvider", "google") // ← add this
+                    }
                 }
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
                 finish()
             }
         }
 
-        viewModel.errorMessage.observe(this) {
-            if (it != null) {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        viewModel.errorMessage.observe(this) { message ->
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
         }
 
         viewModel.isLoading.observe(this) { loading ->
             getOtpButton.isEnabled = !loading
             googleButton.isEnabled = !loading
-            if (loading) {
-                loginContainer.visibility = View.GONE
-                loadingProgressBar.visibility = View.VISIBLE
-            } else {
-                loginContainer.visibility = View.VISIBLE
-                loadingProgressBar.visibility = View.GONE
-            }
+            loginContainer.visibility = if (loading) View.GONE else View.VISIBLE
+            loadingProgressBar.visibility = if (loading) View.VISIBLE else View.GONE
         }
     }
 
-    private val googleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val googleLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         if (result.resultCode == RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
@@ -126,14 +137,12 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        // Auto-login if already authenticated
         val user = viewModel.checkUser()
-        if (user != null) {
+        if (user != null && !hasNavigated) {
             viewModel.checkIfUserRegistered(user)
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.resetRegistrationState()
-    }
+
 }

@@ -29,7 +29,6 @@ class AuthViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // ── ADDED: register result LiveData ───────────────────────────
     private val _registerResult = MutableLiveData<Result<Unit>>()
     val registerResult: LiveData<Result<Unit>> = _registerResult
 
@@ -86,22 +85,9 @@ class AuthViewModel : ViewModel() {
                         _authResult.value = user
                         _isUserRegistered.value = true
                     } else {
-
-                        repository.saveUserToFirestore(
-                            user.uid,
-                            user.displayName ?: "",
-                            email = user.email,
-                            dob = null,
-                            gender = ""
-                        ) { saved, _ ->
-                            _isLoading.value = false
-                            if (saved) {
-                                _authResult.value = user
-                                _isUserRegistered.value = true
-                            } else {
-                                _errorMessage.value = "Failed to save account. Try again."
-                            }
-                        }
+                        _isLoading.value = false
+                        _authResult.value = user
+                        _isUserRegistered.value = false
                     }
                 }
             } else {
@@ -128,7 +114,9 @@ class AuthViewModel : ViewModel() {
         name: String,
         email: String?,
         dob: String,
-        gender: String
+        gender: String,
+        phone: String?,
+        authProvider: String
     ) {
         val uid = repository.getCurrentUser()?.uid
         if (uid == null) {
@@ -136,11 +124,13 @@ class AuthViewModel : ViewModel() {
             return
         }
         repository.saveUserToFirestore(
-            uid    = uid,
-            name   = name,
-            email  = email,
-            dob    = dob,
-            gender = gender
+            uid          = uid,
+            name         = name,
+            email        = email,
+            dob          = dob,
+            gender       = gender,
+            phone        = phone,
+            authProvider = authProvider
         ) { success, error ->
             _registerResult.value = if (success) Result.success(Unit)
             else Result.failure(Exception(error ?: "Registration failed"))
@@ -148,6 +138,12 @@ class AuthViewModel : ViewModel() {
     }
 
     fun checkUser(): FirebaseUser? = repository.getCurrentUser()
-    fun logout() = repository.signOut()
+    fun logout(
+        googleSignInClient: com.google.android.gms.auth.api.signin.GoogleSignInClient? = null,
+        onComplete: () -> Unit
+    ) {
+        repository.signOut(googleSignInClient, onComplete)
+    }
     fun resetRegistrationState() { _isUserRegistered.value = null }
+    fun resetVerificationId() { _verificationId.value = null }
 }
