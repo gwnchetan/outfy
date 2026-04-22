@@ -7,10 +7,17 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.outfy.viewmodel.AuthViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
@@ -25,15 +32,21 @@ class RegisterActivity : AppCompatActivity() {
 
     // ── 1. UI REFERENCES ──────────────────────────────────────────
     private lateinit var nameEditText: TextInputEditText
+    private lateinit var emailLayout: TextInputLayout
     private lateinit var emailEditText: TextInputEditText
     private lateinit var phoneLayout: TextInputLayout
     private lateinit var phoneEditText: TextInputEditText
     private lateinit var dobEditText: TextInputEditText
     private lateinit var genderDropdown: AutoCompleteTextView
     private lateinit var continueButton: Button
+    private lateinit var backButton: ImageView
+    private lateinit var changeMethodText: TextView
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     // ── 2. VIEWMODEL ──────────────────────────────────────────────
     private val viewModel: AuthViewModel by viewModels()
+    private var authProvider: String = "phone"
+    private var phoneFromSession: String? = null
 
     // ── 3. SETUP ──────────────────────────────────────────────────
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +55,16 @@ class RegisterActivity : AppCompatActivity() {
 
         bindViews()
 
-        val authProvider = intent.getStringExtra("authProvider") ?: "phone"
+        authProvider = intent.getStringExtra("authProvider") ?: "phone"
         val currentUser = FirebaseAuth.getInstance().currentUser
+        phoneFromSession = currentUser?.phoneNumber?.trim()
+            ?: intent.getStringExtra("phone")?.trim()
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         if (authProvider == "google") {
             // pre-fill name and email from Google
@@ -62,6 +83,7 @@ class RegisterActivity : AppCompatActivity() {
         setupGenderDropdown()
         setupDatePicker()
         observeViewModel()
+        setupNavigation()
 
         continueButton.setOnClickListener {
             handleContinue()
@@ -69,13 +91,27 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
+        backButton = findViewById(R.id.btnBack)
+        changeMethodText = findViewById(R.id.tvChangeMethod)
         nameEditText = findViewById(R.id.nameEditText)
+        emailLayout = findViewById(R.id.emailLayout)
         emailEditText = findViewById(R.id.emailEditText)
         phoneLayout = findViewById(R.id.phoneLayout)
         phoneEditText = findViewById(R.id.phoneEditText)
         dobEditText = findViewById(R.id.dobEditText)
         genderDropdown = findViewById(R.id.genderDropdown)
         continueButton = findViewById(R.id.continueButton)
+    }
+
+    private fun setupNavigation() {
+        backButton.setOnClickListener { confirmExitRegistration() }
+        changeMethodText.setOnClickListener { confirmExitRegistration() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                confirmExitRegistration()
+            }
+        })
     }
 
     private fun setupGenderDropdown() {
@@ -107,11 +143,12 @@ class RegisterActivity : AppCompatActivity() {
 
     // ── 4. VALIDATION ─────────────────────────────────────────────
     private fun handleContinue() {
+        emailLayout.error = null
+        phoneLayout.error = null
         val name   = nameEditText.text.toString().trim()
         val email  = emailEditText.text.toString().trim()
         val dob    = dobEditText.text.toString().trim()
         val gender = genderDropdown.text.toString().trim()
-        val authProvider = intent.getStringExtra("authProvider") ?: "phone"
 
         // Name check
         if (name.isEmpty()) {
@@ -158,7 +195,7 @@ class RegisterActivity : AppCompatActivity() {
             email        = email.ifEmpty { null },
             dob          = dob,
             gender       = gender,
-            phone        = if (authProvider == "google") "+91${phoneEditText.text.toString().trim()}" else null,
+            phone        = if (authProvider == "google") "+91${phoneEditText.text.toString().trim()}" else phoneFromSession,
             authProvider = authProvider
         )
     }
@@ -177,14 +214,64 @@ class RegisterActivity : AppCompatActivity() {
         viewModel.registerResult.observe(this) { result ->
             when {
                 result.isSuccess -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
+                    startActivity(
+                        Intent(this, HomeActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
                     finish()
                 }
                 result.isFailure -> {
-                    Toast.makeText(this, result.exceptionOrNull()?.message, Toast.LENGTH_SHORT).show()
+                    val message = result.exceptionOrNull()?.message ?: "Registration failed"
+                    when {
+                        message.contains("email", ignoreCase = true) -> emailLayout.error = message
+                        message.contains("phone", ignoreCase = true) -> phoneLayout.error = message
+                    }
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                     continueButton.isEnabled = true
+
+                    if (authProvider == "google" &&
+                        message.contains("email is already linked", ignoreCase = true)
+                    ) {
+                        showGoogleConflictDialog(message)
+                    }
                 }
             }
+        }
+    }
+
+    private fun showGoogleConflictDialog(message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.account_conflict_title)
+            .setMessage(message)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.back_to_login) { _, _ ->
+                exitToLogin()
+            }
+            .show()
+    }
+
+    private fun confirmExitRegistration() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.cancel_registration_title)
+            .setMessage(R.string.cancel_registration_message)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.back_to_login) { _, _ ->
+                exitToLogin()
+            }
+            .show()
+    }
+
+    private fun exitToLogin() {
+        continueButton.isEnabled = false
+        val googleClient = if (authProvider == "google") googleSignInClient else null
+        viewModel.logout(googleClient) {
+            startActivity(
+                Intent(this, LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+            )
+            finish()
         }
     }
 }

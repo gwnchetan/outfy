@@ -1,7 +1,33 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.Outfy" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <!-- Main brand colors (Beige) -->
+        <item name="colorPrimary">#D6C4AF</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="colorPrimaryContainer">#4A3F35</item>
+        <item name="colorOnPrimaryContainer">#E8DDCF</item>
+
+        <item name="colorSecondary">#D6C4AF</item>
+        <item name="colorOnSecondary">#000000</item>
+        <item name="colorSecondaryContainer">#4A3F35</item>
+        <item name="colorOnSecondaryContainer">#E8DDCF</item>
+
+        <item name="colorTertiary">#D6C4AF</item>
+        <item name="colorOnTertiary">#000000</item>
+
+        <!-- Neutral colors for Dark Mode -->
+        <item name="android:windowBackground">#121212</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorOutline">#999999</item>
+
+        <!-- Input field & selection colors -->
+        <item name="colorControlActivated">#D6C4AF</item>
+        <item name="colorControlHighlight">#D6C4AF</item>
+        <item name="colorControlNormal">#999999</item>
+
     </style>
+
 </resources>

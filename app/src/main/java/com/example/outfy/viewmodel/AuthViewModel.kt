@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.outfy.data.AuthRepository
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 
@@ -70,7 +71,10 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    fun signInWithGoogle(idToken: String) {
+    fun signInWithGoogle(
+        idToken: String,
+        googleSignInClient: com.google.android.gms.auth.api.signin.GoogleSignInClient? = null
+    ) {
         _isLoading.value = true
         repository.signInWithGoogle(idToken) { success, user ->
             if (success && user != null) {
@@ -85,9 +89,27 @@ class AuthViewModel : ViewModel() {
                         _authResult.value = user
                         _isUserRegistered.value = true
                     } else {
-                        _isLoading.value = false
-                        _authResult.value = user
-                        _isUserRegistered.value = false
+                        repository.findUidByEmail(user.email) { existingUid, indexError ->
+                            if (indexError != null) {
+                                _isLoading.value = false
+                                _errorMessage.value = "Network error. Please try again."
+                                return@findUidByEmail
+                            }
+
+                            if (existingUid != null && existingUid != user.uid) {
+                                repository.signOut(googleSignInClient) {
+                                    _isLoading.value = false
+                                    _authResult.value = null
+                                    _isUserRegistered.value = null
+                                    _errorMessage.value =
+                                        "This email is already linked to another account. Use your original login method."
+                                }
+                            } else {
+                                _isLoading.value = false
+                                _authResult.value = user
+                                _isUserRegistered.value = false
+                            }
+                        }
                     }
                 }
             } else {
@@ -97,7 +119,10 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    fun checkIfUserRegistered(user: FirebaseUser) {
+    fun checkIfUserRegistered(
+        user: FirebaseUser,
+        googleSignInClient: com.google.android.gms.auth.api.signin.GoogleSignInClient? = null
+    ) {
         _isLoading.value = true
         repository.checkUserInFirestore(user.uid) { exists, error ->
             _isLoading.value = false
@@ -105,8 +130,31 @@ class AuthViewModel : ViewModel() {
                 _errorMessage.value = "Network error. Please try again."
                 return@checkUserInFirestore
             }
-            _authResult.value = user
-            _isUserRegistered.value = exists
+
+            val isGoogleUser = user.providerData.any { it.providerId == GoogleAuthProvider.PROVIDER_ID }
+            if (exists == false && isGoogleUser) {
+                repository.findUidByEmail(user.email) { existingUid, indexError ->
+                    if (indexError != null) {
+                        _errorMessage.value = "Network error. Please try again."
+                        return@findUidByEmail
+                    }
+
+                    if (existingUid != null && existingUid != user.uid) {
+                        repository.signOut(googleSignInClient) {
+                            _authResult.value = null
+                            _isUserRegistered.value = null
+                            _errorMessage.value =
+                                "This email is already linked to another account. Use your original login method."
+                        }
+                    } else {
+                        _authResult.value = user
+                        _isUserRegistered.value = false
+                    }
+                }
+            } else {
+                _authResult.value = user
+                _isUserRegistered.value = exists
+            }
         }
     }
 

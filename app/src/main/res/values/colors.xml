@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="app_bg">#F8F8F8</color>
+    <color name="search_bg">#EDE4DB</color>
+    <color name="banner_bg">#E5D6C6</color>
     <color name="brand_beige">#D6C4AF</color>
     <color name="brand_beige_light">#E8DDCF</color>
+    <color name="error_red">#C62828</color>
+    <color name="order_status_placed">#8A5B2B</color>
+    <color name="order_status_departure">#1D4ED8</color>
+    <color name="order_status_city">#7C3AED</color>
+    <color name="order_status_out">#D97706</color>
+    <color name="order_status_delivered">#15803D</color>
+    <color name="order_status_cancelled">#B91C1C</color>
+    <color name="gray_text">#8E8E8E</color>
+    <color name="gray_text_light">#BDBDBD</color>
     <color name="gray_light">#F2F2F2</color>
-    <color name="gray_text">#777777</color>
-    <color name="gray_text_light">#999999</color>
+    <color name="red">#FF0000</color>
 </resources>

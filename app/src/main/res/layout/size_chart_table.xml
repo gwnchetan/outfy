@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Size Chart Header -->
+    <TextView
+        android:id="@+id/sizeChartTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Size Chart"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Table Container -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:id="@+id/sizeChartTable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
+
+            <!-- Header Row -->
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#1B5E20">
+
+                <TextView
+                    android:text="Size"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeChartCol1Header"
+                    android:text="Chest"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeChartCol2Header"
+                    android:text="Height"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <!-- Size Row 1 (XS) -->
+            <TableRow
+                android:id="@+id/sizeChartRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F5F5F5">
+
+                <TextView
+                    android:id="@+id/sizeRow1Label"
+                    android:text="XS"
+                    android:textColor="#000000"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow1Col1"
+                    android:text="32\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow1Col2"
+                    android:text="24\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <!-- Size Row 2 (S) -->
+            <TableRow
+                android:id="@+id/sizeChartRow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/sizeRow2Label"
+                    android:text="S"
+                    android:textColor="#000000"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow2Col1"
+                    android:text="35\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow2Col2"
+                    android:text="25\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <!-- Size Row 3 (M) -->
+            <TableRow
+                android:id="@+id/sizeChartRow3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F5F5F5">
+
+                <TextView
+                    android:id="@+id/sizeRow3Label"
+                    android:text="M"
+                    android:textColor="#000000"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow3Col1"
+                    android:text="39\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow3Col2"
+                    android:text="28\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <!-- Size Row 4 (L) -->
+            <TableRow
+                android:id="@+id/sizeChartRow4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/sizeRow4Label"
+                    android:text="L"
+                    android:textColor="#000000"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow4Col1"
+                    android:text="43\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow4Col2"
+                    android:text="29\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <!-- Size Row 5 (XL) -->
+            <TableRow
+                android:id="@+id/sizeChartRow5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F5F5F5">
+
+                <TextView
+                    android:id="@+id/sizeRow5Label"
+                    android:text="XL"
+                    android:textColor="#000000"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow5Col1"
+                    android:text="47\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow5Col2"
+                    android:text="29.5\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <!-- Size Row 6 (XXL) -->
+            <TableRow
+                android:id="@+id/sizeChartRow6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/sizeRow6Label"
+                    android:text="XXL"
+                    android:textColor="#000000"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow6Col1"
+                    android:text="51\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/sizeRow6Col2"
+                    android:text="31\"
+                    android:textColor="#333333"
+                    android:padding="12dp"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </HorizontalScrollView>
+
+</LinearLayout>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView android:layout_width="24dp" android:layout_height="wrap_content" android:text="5★" android:textSize="10sp"/>
+        <ProgressBar android:id="@+id/pb5" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="4dp" android:layout_weight="1" android:layout_marginHorizontal="8dp" android:progress="60" android:progressTint="#D6C4AF"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="60%" android:textSize="10sp" android:textColor="#888888"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView android:layout_width="24dp" android:layout_height="wrap_content" android:text="4★" android:textSize="10sp"/>
+        <ProgressBar android:id="@+id/pb4" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="4dp" android:layout_weight="1" android:layout_marginHorizontal="8dp" android:progress="25" android:progressTint="#D6C4AF"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="25%" android:textSize="10sp" android:textColor="#888888"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView android:layout_width="24dp" android:layout_height="wrap_content" android:text="3★" android:textSize="10sp"/>
+        <ProgressBar android:id="@+id/pb3" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="4dp" android:layout_weight="1" android:layout_marginHorizontal="8dp" android:progress="10" android:progressTint="#D6C4AF"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10%" android:textSize="10sp" android:textColor="#888888"/>
+    </LinearLayout>
+
+</LinearLayout>

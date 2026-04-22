@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="cart_items_count">
+        <item quantity="one">%d item in your bag</item>
+        <item quantity="other">%d items in your bag</item>
+    </plurals>
+    <plurals name="checkout_items_count">
+        <item quantity="one">%d product in this order</item>
+        <item quantity="other">%d products in this order</item>
+    </plurals>
+    <plurals name="reviews_count">
+        <item quantity="one">%d review</item>
+        <item quantity="other">%d reviews</item>
+    </plurals>
+</resources>

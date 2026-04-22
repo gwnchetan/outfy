@@ -82,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.authResult.observe(this) { user ->
             if (user != null && !hasNavigated) {
-                viewModel.checkIfUserRegistered(user)
+                viewModel.checkIfUserRegistered(user, googleSignInClient)
             }
         }
 
@@ -128,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
                     return@registerForActivityResult
                 }
-                viewModel.signInWithGoogle(idToken)
+                viewModel.signInWithGoogle(idToken, googleSignInClient)
             } catch (e: ApiException) {
                 Toast.makeText(this, "Google Sign-In Failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
@@ -140,7 +140,7 @@ class LoginActivity : AppCompatActivity() {
         // Auto-login if already authenticated
         val user = viewModel.checkUser()
         if (user != null && !hasNavigated) {
-            viewModel.checkIfUserRegistered(user)
+            viewModel.checkIfUserRegistered(user, googleSignInClient)
         }
     }
 

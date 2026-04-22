@@ -2,15 +2,33 @@
 
     <style name="Base.Theme.Outfy" parent="Theme.Material3.DayNight.NoActionBar">
 
-        <!-- Brand Colors -->
+        <!-- Main brand colors (Beige) -->
         <item name="colorPrimary">#D6C4AF</item>
-        <item name="colorSecondary">#D6C4AF</item>
-        <item name="colorTertiary">#D6C4AF</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="colorPrimaryContainer">#E8DDCF</item>
+        <item name="colorOnPrimaryContainer">#000000</item>
 
-        <!-- Fix input highlight color -->
+        <item name="colorSecondary">#D6C4AF</item>
+        <item name="colorOnSecondary">#000000</item>
+        <item name="colorSecondaryContainer">#E8DDCF</item>
+        <item name="colorOnSecondaryContainer">#000000</item>
+
+        <item name="colorTertiary">#D6C4AF</item>
+        <item name="colorOnTertiary">#000000</item>
+
+        <!-- Force Surface & Background to avoid default purple -->
+        <item name="android:windowBackground">#F2F2F2</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#000000</item>
+        <item name="colorSurfaceVariant">#E8DDCF</item>
+        <item name="colorOnSurfaceVariant">#000000</item>
+        <item name="colorOutline">#777777</item>
+
+        <!-- Input field & selection colors -->
         <item name="colorControlActivated">#D6C4AF</item>
         <item name="colorControlHighlight">#D6C4AF</item>
-        <item name="colorControlNormal">#999999</item>
+        <item name="colorControlNormal">#777777</item>
 
     </style>
 
