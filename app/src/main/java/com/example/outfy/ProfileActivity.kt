@@ -12,36 +12,20 @@ import com.example.outfy.model.cityLine
 import com.example.outfy.model.isComplete
 import com.example.outfy.model.streetLine
 import com.example.outfy.viewmodel.ProfileViewModel
-import com.example.outfy.viewmodel.CartViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
     private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var cartBadge: BadgeDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-        cartViewModel.loadCartCount()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -89,19 +73,6 @@ class ProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 viewModel.clearError()
             }
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 

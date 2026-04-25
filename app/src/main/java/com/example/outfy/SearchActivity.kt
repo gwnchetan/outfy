@@ -19,20 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.outfy.adapter.ProductAdapter
 import com.example.outfy.adapter.SimilarProductAdapter
 import com.example.outfy.databinding.ActivitySearchBinding
-import com.example.outfy.viewmodel.CartViewModel
 import com.example.outfy.viewmodel.SearchViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.badge.ExperimentalBadgeUtils
-
-@OptIn(ExperimentalBadgeUtils::class)
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModels()
     private lateinit var resultsAdapter: ProductAdapter
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartBadge: BadgeDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,18 +43,7 @@ class SearchActivity : AppCompatActivity() {
         setupNavigation()
         observeViewModel()
 
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-
         viewModel.loadCatalog()
-        cartViewModel.loadCartCount()
     }
 
     private fun setupResultsList() {
@@ -188,18 +169,7 @@ class SearchActivity : AppCompatActivity() {
             binding.progressBar.isVisible = isLoading
         }
 
-        cartViewModel.cartCount.observe(this) { count: Int ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
 
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
-        }
     }
 
     private fun selectTargetFilter(target: String?) {

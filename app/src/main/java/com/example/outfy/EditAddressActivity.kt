@@ -10,32 +10,16 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.outfy.databinding.ActivityEditAddressBinding
 import com.example.outfy.model.UserAddress
 import com.example.outfy.viewmodel.EditAddressViewModel
-import com.example.outfy.viewmodel.CartViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 
-class EditAddressActivity : AppCompatActivity() {
+class EditAddressActivity : BaseActivity() {
     private lateinit var binding: ActivityEditAddressBinding
     private val viewModel: EditAddressViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartBadge: BadgeDrawable
     private var hasBoundInitialAddress = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditAddressBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-        cartViewModel.loadCartCount()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -93,19 +77,6 @@ class EditAddressActivity : AppCompatActivity() {
                 viewModel.clearSaveCompleted()
                 finish()
             }
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 

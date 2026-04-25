@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.outfy.R
 import com.example.outfy.databinding.ItemOrderBinding
 import com.example.outfy.model.OrderRecord
@@ -41,6 +42,19 @@ class OrderAdapter(
             binding.tvOrderMeta.text = "${order.itemCount} items"
             binding.tvOrderTotal.text = currencyFormat.format(order.pricing.totalAmount)
             binding.tvOrderAction.text = actionLabel(order.status)
+            
+            // Load the first item's image as preview
+            val firstItemImage = order.items.firstOrNull()?.imageUrl
+            if (!firstItemImage.isNullOrEmpty()) {
+                Glide.with(binding.root.context)
+                    .load(firstItemImage)
+                    .placeholder(R.drawable.logo_elem)
+                    .centerCrop()
+                    .into(binding.ivProductPreview)
+            } else {
+                binding.ivProductPreview.setImageResource(R.drawable.logo_elem)
+            }
+
             binding.root.setOnClickListener { onOpen(order) }
         }
 

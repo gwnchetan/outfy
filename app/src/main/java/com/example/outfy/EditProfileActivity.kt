@@ -11,37 +11,21 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.outfy.databinding.ActivityEditProfileBinding
 import com.example.outfy.model.Users
 import com.example.outfy.viewmodel.EditProfileViewModel
-import com.example.outfy.viewmodel.CartViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class EditProfileActivity : AppCompatActivity() {
+class EditProfileActivity : BaseActivity() {
     private lateinit var binding: ActivityEditProfileBinding
     private val viewModel: EditProfileViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartBadge: BadgeDrawable
     private var hasBoundInitialProfile = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-        cartViewModel.loadCartCount()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -123,19 +107,6 @@ class EditProfileActivity : AppCompatActivity() {
                 viewModel.clearSaveCompleted()
                 finish()
             }
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 

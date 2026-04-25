@@ -262,17 +262,4 @@
         app:itemIconTint="#8E8E8E"
         app:itemTextColor="#8E8E8E" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="76dp"
-        android:src="@drawable/ic_cart"
-        app:backgroundTint="#000000"
-        app:tint="#FFFFFF"
-        app:fabSize="normal"
-        app:elevation="8dp" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

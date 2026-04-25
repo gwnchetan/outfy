@@ -1,93 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/app_bg">
 
-    <LinearLayout
+    <!-- Header -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="12dp">
 
-        <!-- Header -->
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="12dp">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="OUTFYT"
+                android:textColor="#222222"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="OUTFYT"
-                    android:textColor="#222222"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.05" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/home_header_subtitle"
+                android:textColor="@color/gray_text"
+                android:textSize="13sp" />
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/home_header_subtitle"
-                    android:textColor="@color/gray_text"
-                    android:textSize="13sp" />
-            </LinearLayout>
+    </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/ivCart"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_cart"
-                app:tint="#000000" />
-        </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/searchEntry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_search_new"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:minHeight="68dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="18dp"
+        android:paddingVertical="12dp">
 
-        <!-- Search Bar Entry -->
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="#7A614D" />
+
         <LinearLayout
-            android:id="@+id/searchEntry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_search_title"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/home_search_subtitle"
+                android:textColor="#7C7064"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/homeNestedScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/bg_search_new"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:minHeight="68dp"
-            android:orientation="horizontal"
-            android:paddingHorizontal="18dp"
-            android:paddingVertical="12dp">
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@android:drawable/ic_menu_search"
-                app:tint="#7A614D" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginHorizontal="20dp"
+                app:cardCornerRadius="20dp"
+                app:strokeWidth="0dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_home_hero"
+                    android:orientation="vertical"
+                    android:padding="22dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_hero_eyebrow"
+                        android:textColor="#7A614D"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.12" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/home_hero_title"
+                        android:textSize="26sp"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="240dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/home_hero_subtitle"
+                        android:textColor="#5C4033"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/btnShopBanner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:background="@drawable/bg_hero_cta"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="9dp"
+                        android:text="@string/shop_the_drop"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginTop="22dp"
+                android:layout_marginHorizontal="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/home_search_title"
+                    android:layout_weight="1"
+                    android:text="@string/home_sections_label"
                     android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -95,240 +175,171 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/home_search_subtitle"
-                    android:textColor="#7C7064"
+                    android:text="@string/home_sections_hint"
+                    android:textColor="@color/gray_text"
                     android:textSize="12sp" />
             </LinearLayout>
-        </LinearLayout>
 
-        <!-- Content Area -->
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/homeNestedScroll"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
+            <!-- Category Icons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="80dp">
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="18dp"
+                android:paddingBottom="10dp">
 
-                <!-- Hero Banner -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:layout_marginHorizontal="20dp"
-                    app:cardCornerRadius="20dp"
-                    app:strokeWidth="0dp"
-                    app:cardElevation="4dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/bg_home_hero"
-                        android:orientation="vertical"
-                        android:padding="22dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/home_hero_eyebrow"
-                            android:textColor="#7A614D"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.12" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/home_hero_title"
-                            android:textSize="26sp"
-                            android:textColor="#000000"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="240dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/home_hero_subtitle"
-                            android:textColor="#5C4033"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/btnShopBanner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="18dp"
-                            android:background="@drawable/bg_hero_cta"
-                            android:paddingHorizontal="16dp"
-                            android:paddingVertical="9dp"
-                            android:text="@string/shop_the_drop"
-                            android:textColor="#000000"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Categories -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/btnMen"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:paddingTop="22dp">
-
-                    <LinearLayout
-                        android:id="@+id/btnMen"
-                        android:layout_width="0dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="62dp"
+                        android:layout_height="62dp"
+                        android:background="@drawable/bg_category_circle"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_men"
+                        app:tint="#5C4033" />
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="62dp"
-                            android:layout_height="62dp"
-                            android:background="@drawable/bg_category_circle"
-                            android:padding="14dp"
-                            android:src="@drawable/ic_men"
-                            app:tint="#5C4033" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="@string/section_men"
-                            android:textSize="12sp"
-                            android:textColor="#000000"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/btnWomen"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="62dp"
-                            android:layout_height="62dp"
-                            android:background="@drawable/bg_category_circle"
-                            android:padding="14dp"
-                            android:src="@drawable/ic_women"
-                            app:tint="#5C4033" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="@string/section_women"
-                            android:textSize="12sp"
-                            android:textColor="#000000"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/btnKids"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="62dp"
-                            android:layout_height="62dp"
-                            android:background="@drawable/bg_category_circle"
-                            android:padding="14dp"
-                            android:src="@drawable/ic_kids"
-                            app:tint="#5C4033" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="@string/section_kids"
-                            android:textSize="12sp"
-                            android:textColor="#000000"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                        android:layout_marginTop="6dp"
+                        android:text="@string/section_men"
+                        android:textSize="12sp"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- Section Header -->
-                <RelativeLayout
-                    android:id="@+id/sectionHeaderContainer"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/btnWomen"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="26dp"
-                    android:layout_marginHorizontal="20dp">
-
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="62dp"
+                        android:layout_height="62dp"
+                        android:background="@drawable/bg_category_circle"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_women"
+                        app:tint="#5C4033" />
                     <TextView
-                        android:id="@+id/tvSectionTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Recommended for You"
-                        android:textColor="#000000"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/btnResetSection"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="@string/reset_section"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/section_women"
                         android:textSize="12sp"
-                        android:textColor="#8E8E8E" />
-                </RelativeLayout>
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btnKids"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="62dp"
+                        android:layout_height="62dp"
+                        android:background="@drawable/bg_category_circle"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_kids"
+                        app:tint="#5C4033" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/section_kids"
+                        android:textSize="12sp"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Section Title -->
+            <RelativeLayout
+                android:id="@+id/sectionHeaderContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginHorizontal="20dp"
+                android:paddingBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tvSectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recommended for You"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvSectionMeta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
+                    android:layout_below="@id/tvSectionTitle"
                     android:layout_marginTop="4dp"
                     android:text="@string/home_default_section_meta"
                     android:textColor="@color/gray_text"
                     android:textSize="13sp" />
 
-                <!-- Product Grid -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvProducts"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/btnResetSection"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:paddingHorizontal="12dp"
-                    android:nestedScrollingEnabled="false" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/reset_section"
+                    android:textSize="12sp"
+                    android:textColor="#8E8E8E" />
+            </RelativeLayout>
 
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+            <!-- Product Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="12dp"
+                android:nestedScrollingEnabled="false" />
 
-    </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Navigation Components -->
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:background="#FFFFFF"
-        app:elevation="16dp"
+        app:elevation="8dp"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
         app:itemIconTint="#8E8E8E"
-        app:itemTextColor="#8E8E8E" />
+        app:itemTextColor="#8E8E8E"
+        app:itemRippleColor="#F2F2F2" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="76dp"
-        android:src="@drawable/ic_cart"
-        app:backgroundTint="#000000"
-        app:tint="#FFFFFF"
-        app:fabSize="normal"
-        app:elevation="8dp" />
+</LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -26,18 +26,13 @@ import com.example.outfy.model.orderStatusDescription
 import com.example.outfy.model.orderStatusLabel
 import com.example.outfy.model.streetLine
 import com.example.outfy.viewmodel.TrackOrderViewModel
-import com.example.outfy.viewmodel.CartViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackOrderActivity : AppCompatActivity() {
+class TrackOrderActivity : BaseActivity() {
     private lateinit var binding: ActivityTrackOrderBinding
     private val viewModel: TrackOrderViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartBadge: BadgeDrawable
     private lateinit var orderLineAdapter: OrderLineItemAdapter
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-IN"))
     private val dateFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
@@ -47,17 +42,6 @@ class TrackOrderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackOrderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-        cartViewModel.loadCartCount()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -169,19 +153,6 @@ class TrackOrderActivity : AppCompatActivity() {
                 viewModel.clearOpenCartEvent()
             }
         }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
-        }
     }
 
     private fun renderOrder(order: OrderRecord) {
@@ -206,7 +177,15 @@ class TrackOrderActivity : AppCompatActivity() {
         binding.tvAddressPhone.text = address?.phone.orEmpty()
 
         binding.tvPaymentLabel.text = order.payment.label
-        binding.tvPaymentStatus.text = order.payment.status.replaceFirstChar { it.uppercase() }
+        
+        // Hide payment status (Pending) if it's COD and order is Delivered
+        if (order.payment.method == "cash_on_delivery" && order.status == "delivered") {
+            binding.tvPaymentStatus.isVisible = false
+        } else {
+            binding.tvPaymentStatus.isVisible = true
+            binding.tvPaymentStatus.text = order.payment.status.replaceFirstChar { it.uppercase() }
+        }
+
         binding.tvOrderCount.text = resources.getQuantityString(
             R.plurals.checkout_items_count,
             order.itemCount,

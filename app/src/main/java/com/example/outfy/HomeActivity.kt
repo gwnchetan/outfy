@@ -10,20 +10,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.outfy.adapter.ProductAdapter
 import com.example.outfy.databinding.ActivityHomeBinding
 import com.example.outfy.viewmodel.HomeViewModel
-import com.example.outfy.viewmodel.CartViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.firebase.auth.FirebaseAuth
-
-@OptIn(ExperimentalBadgeUtils::class)
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var viewModel: HomeViewModel
-    private lateinit var cartViewModel: CartViewModel
     private lateinit var productAdapter: ProductAdapter
-    private lateinit var cartBadge: BadgeDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,22 +42,10 @@ class HomeActivity : AppCompatActivity() {
         } else {
             viewModel.refreshProducts()
         }
-
-        cartViewModel.loadCartCount()
     }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        cartViewModel = ViewModelProvider(this)[CartViewModel::class.java]
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
     }
 
     private fun setupRecyclerView() {
@@ -114,10 +94,6 @@ class HomeActivity : AppCompatActivity() {
             viewModel.resetToDefaultFeed()
             scrollToSectionHeader()
         }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
-        }
     }
 
     private fun observeData() {
@@ -131,15 +107,6 @@ class HomeActivity : AppCompatActivity() {
 
         viewModel.sectionMeta.observe(this) { meta ->
             binding.tvSectionMeta.text = meta
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
         }
     }
 
@@ -162,10 +129,6 @@ class HomeActivity : AppCompatActivity() {
                 }
                 else -> false
             }
-        }
-
-        binding.ivCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 

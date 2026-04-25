@@ -11,35 +11,19 @@ import androidx.core.view.isVisible
 import com.example.outfy.databinding.ActivitySecurityBinding
 import com.example.outfy.model.Users
 import com.example.outfy.viewmodel.SecurityViewModel
-import com.example.outfy.viewmodel.CartViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthProvider
 
-class SecurityActivity : AppCompatActivity() {
+class SecurityActivity : BaseActivity() {
     private lateinit var binding: ActivitySecurityBinding
     private val viewModel: SecurityViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartBadge: BadgeDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySecurityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-        cartViewModel.loadCartCount()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -81,19 +65,6 @@ class SecurityActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 viewModel.clearMessage()
             }
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 

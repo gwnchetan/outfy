@@ -12,33 +12,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.outfy.adapter.OrderAdapter
 import com.example.outfy.databinding.ActivityOrdersBinding
 import com.example.outfy.viewmodel.OrdersViewModel
-import com.example.outfy.viewmodel.CartViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 
-class OrdersActivity : AppCompatActivity() {
+class OrdersActivity : BaseActivity() {
     private lateinit var binding: ActivityOrdersBinding
     private val viewModel: OrdersViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
     private lateinit var orderAdapter: OrderAdapter
-    private lateinit var cartBadge: BadgeDrawable
     private var allOrders = emptyList<com.example.outfy.model.OrderRecord>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityOrdersBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-        cartViewModel.loadCartCount()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -85,19 +69,6 @@ class OrdersActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 viewModel.clearError()
             }
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 

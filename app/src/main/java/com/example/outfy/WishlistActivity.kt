@@ -10,16 +10,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.outfy.adapter.ProductAdapter
 import com.example.outfy.databinding.ActivityWishlistBinding
 import com.example.outfy.viewmodel.WishlistViewModel
-import com.example.outfy.viewmodel.CartViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 
-class WishlistActivity : AppCompatActivity() {
+class WishlistActivity : BaseActivity() {
 
     private lateinit var binding: ActivityWishlistBinding
     private val viewModel: WishlistViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartBadge: BadgeDrawable
     private lateinit var productAdapter: ProductAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,23 +36,12 @@ class WishlistActivity : AppCompatActivity() {
             adapter = productAdapter
         }
 
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-
         observeViewModel()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.loadWishlist()
-        cartViewModel.loadCartCount()
     }
 
     private fun observeViewModel() {
@@ -80,19 +64,6 @@ class WishlistActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 viewModel.clearError()
             }
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 }

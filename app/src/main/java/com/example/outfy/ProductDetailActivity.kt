@@ -32,22 +32,16 @@ import com.example.outfy.model.sizeChartSpec
 import com.example.outfy.model.displayTimestamp
 import com.example.outfy.model.toInitials
 import com.example.outfy.viewmodel.ProductDetailViewModel
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.chip.Chip
-import com.example.outfy.viewmodel.CartViewModel
 import java.text.NumberFormat
 import android.text.format.DateUtils
 import java.util.Locale
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class ProductDetailActivity : AppCompatActivity() {
+class ProductDetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProductDetailBinding
     private val viewModel: ProductDetailViewModel by viewModels()
-    private val cartViewModel: CartViewModel by viewModels()
-    private lateinit var cartBadge: BadgeDrawable
     private var selectedSize: String? = null
     private var currentProductId: String? = null
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-IN"))
@@ -72,23 +66,12 @@ class ProductDetailActivity : AppCompatActivity() {
         setupButtons()
         observeViewModel()
         
-        cartBadge = BadgeDrawable.create(this).apply {
-            backgroundColor = getColor(R.color.red)
-            badgeTextColor = getColor(R.color.white)
-            maxCharacterCount = 2
-        }
-        @Suppress("UnsafeOptInUsageError")
-        binding.fabCart.viewTreeObserver.addOnGlobalLayoutListener {
-            BadgeUtils.attachBadgeDrawable(cartBadge, binding.fabCart)
-        }
-        
         // Show loading spinner
         binding.progressBar.visibility = View.VISIBLE
         currentProductId = productId
         viewModel.loadWishlistState(productId)
         viewModel.loadReviewState(productId)
         viewModel.fetchProductDetails(productId)
-        cartViewModel.loadCartCount()
     }
 
     private fun setupButtons() {
@@ -201,19 +184,6 @@ class ProductDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 viewModel.clearReviewMessage()
             }
-        }
-
-        cartViewModel.cartCount.observe(this) { count ->
-            if (count > 0) {
-                cartBadge.number = count
-                cartBadge.isVisible = true
-            } else {
-                cartBadge.isVisible = false
-            }
-        }
-
-        binding.fabCart.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
         }
     }
 
